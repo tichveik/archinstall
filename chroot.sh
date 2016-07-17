@@ -21,7 +21,7 @@ echo LANG=fr_FR.UTF-8 > /etc/locale.conf
 export LANG=fr_FR.UTF-8
 echo KEYMAP=fr >> /etc/vconsole.conf
 echo -e $GREEN":: Configuration du fichier mkinitcpio.conf"$END
-sed -i '7s/""/ sd-mod /' /etc/mkinitcpio.conf
+sed -i '7s/""/"sd-mod" /' /etc/mkinitcpio.conf
 sed -i '52s/ / keymap encrypt lvm2 resume /' /etc/mkinitcpio.conf
 echo -e $GREEN":: Création de la ramdisk"$END
 mkinitcpio -p linux
