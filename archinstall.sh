@@ -64,7 +64,7 @@ hop(){
     echo -e $GREEN":: Montage de la partition /boot"$END
     mount /dev/sda1 /mnt/boot
     echo -e $GREEN":: Installation du systeme de base"$END
-    pacstrap /mnt base base-devel
+    pacstrap /mnt base #base-devel
     }
 
 fchroot(){
@@ -72,10 +72,11 @@ fchroot(){
     genfstab -U -p /mnt  >> /mnt/etc/fstab
     echo -e $GREEN":: Chroot..."$END
     echo -e $GREEN":: Copie du script chroot"$END
-    cp -v chroot.sh /mnt/root/
-    mount -o remount,exec /mnt
-    arch-chroot /mnt/ /root/chroot.sh
+    cp -v chroot.sh /mnt/
+    chmod +x /mnt/chroot.sh
+    arch-chroot /mnt ./chroot.sh
 }
+
 parts
 enc
 hop
