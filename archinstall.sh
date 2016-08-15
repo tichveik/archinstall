@@ -7,6 +7,9 @@ CYAN='\e[0;36m'         # Cyan
 WHITE='\e[0;37m'        # White
 END='\e[0m'
 LOG=installation.log
+
+export LC_ALL=""
+export LC_COLLATE=C
 export LANG=fr_FR.UTF-8
 LANG=fr_FR.UTF-8
 
@@ -14,8 +17,15 @@ echo ""
 echo -e $CYAN":: Installation d'ArchLinux"$END
 echo ""
 sleep 3
-touch $LOG 
+touch $LOG
 
+ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
+echo -e $GREEN":: Configuration des locales"$END
+echo "fr_FR.UTF-8 UTF-8" >> /etc/locale.gen
+locale-gen
+echo LANG=fr_FR.UTF-8 > /etc/locale.conf
+export LANG=fr_FR.UTF-8
+echo KEYMAP=fr >> /etc/vconsole.conf
 
 parts(){
     #cfdisk /dev/sda
@@ -33,8 +43,8 @@ enc(){
     cryptsetup -c aes-xts-plain -y -s 512 luksFormat /dev/sda2
     if [ $? = 0 ];then
         echo -e $GREEN":: Ouverture du disque"$END
-        cryptsetup luksOpen /dev/sda2 sda2_crypt 
-        modprobe dm-mod 
+        cryptsetup luksOpen /dev/sda2 sda2_crypt
+        modprobe dm-mod
         echo -e $GREEN":: Création du volume physique"$END
         pvcreate /dev/mapper/sda2_crypt
         echo -e $GREEN":: Création du groupe de volume"$END
@@ -50,7 +60,7 @@ enc(){
         mkfs.ext4 -q /dev/mapper/CryptGroup-lvarch -L arch
     else
         echo -e $RED":: Erreure de Chiffrement !"$END
-        exit 
+        exit
     fi
     }
 
@@ -69,7 +79,7 @@ hop(){
 
 fchroot(){
     echo -e $GREEN":: Configuration de /etc/fstab"$END
-    genfstab -U -p /mnt  >> /mnt/etc/fstab
+    genfstab -U -p /mnt  >> /etc/fstab
     echo -e $GREEN":: Chroot..."$END
     echo -e $GREEN":: Copie du script chroot"$END
     cp -v chroot.sh /mnt/
