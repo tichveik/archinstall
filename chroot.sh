@@ -34,8 +34,8 @@ pacman -S grub-bios os-prober
 grub-install --boot-directory=/boot --no-floppy --recheck /dev/sda
 cp /usr/share/grub/{unicode.pf2,ascii.pf2} /boot/grub
 echo -e $GREEN":: Configuration de grub"$END
-sed -i '4s/"quiet"/"verbose" /' /etc/default/grub
-sed -i '5s/""/"cryptdevice\=\/dev\/sda2\:sda2_crypt resume\=\/dev\/mapper\/CryptGroup\-lvswap pcie\_aspm\=force elevator\=noop" /' /etc/default/grub
+sed -i '6s/"quiet"/"verbose" /' /etc/default/grub
+sed -i '7s/""/"cryptdevice\=\/dev\/sda2\:sda2_crypt resume\=\/dev\/mapper\/CryptGroup\-lvswap pcie\_aspm\=force elevator\=noop" /' /etc/default/grub
 echo -e $GREEN"Géneration de grub.cfg"$END
 grub-mkconfig -o /boot/grub/grub.cfg
 echo -e $GREEN"Mot de passe pour root:"$END
