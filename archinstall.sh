@@ -27,7 +27,18 @@ echo LANG=fr_FR.UTF-8 > /etc/locale.conf
 export LANG=fr_FR.UTF-8
 echo KEYMAP=fr >> /etc/vconsole.conf
 
-parts(){
+parts_gpt(){
+    echo -e $GREEN":: Création de la table de partition"$END
+    parted -s /dev/sda mklabel gpt
+    echo -e $GREEN":: Création de l'esp"$END
+    parted -s /dev/sda mkpart primary 1Mib 250Mib
+    parted -s /dev/sda set 1 boot on
+    echo -e $GREEN":: Création de la partition /"$END
+    parted -s /dev/sda mkpart primary 250Mib 100%
+    RET = gpt
+    }
+
+parts_msdos(){
     #cfdisk /dev/sda
     echo -e $GREEN":: Création de la table de partition"$END
     parted -s /dev/sda mklabel msdos
@@ -36,7 +47,11 @@ parts(){
     parted -s /dev/sda set 1 boot on
     echo -e $GREEN":: Création de la partition /"$END
     parted -s /dev/sda mkpart primary 250Mib 100%
+    RET = msdos
     }
+
+
+
 
 enc(){
     echo -e $GREEN":: Chiffrement du disque"$END
@@ -52,14 +67,20 @@ enc(){
         echo -e $GREEN":: Création des volumes logiques (swap & /)"$END
         lvcreate -C y -L 4G CryptGroup -n lvswap
         lvcreate -l +100%FREE CryptGroup -n lvarch
-        echo -e $GREEN":: Appliquation du systeme de fichier pour /boot"$END
-        mkfs.ext4 -q /dev/sda1
-        echo -e $GREEN":: Appliquation du systeme de fichier pour swap"$END
-        mkswap  /dev/mapper/CryptGroup-lvswap -L swap
-        echo -e $GREEN":: Appliquation du systeme de fichier pour /"$END
-        mkfs.ext4 -q /dev/mapper/CryptGroup-lvarch -L arch
+        if [ $RET= gpt ]; then
+          echo -e $GREEN":: Appliquation du systeme de fichier pour /boot/efi"$END
+          mkfs.fat -F32 /dev/sda1
+
+        else
+          echo -e $GREEN":: Appliquation du systeme de fichier pour /boot"$END
+          mkfs.ext4 -q /dev/sda1
+        fi
+          echo -e $GREEN":: Appliquation du systeme de fichier pour swap"$END
+          mkswap  /dev/mapper/CryptGroup-lvswap -L swap
+          echo -e $GREEN":: Appliquation du systeme de fichier pour /"$END
+          mkfs.ext4 -q /dev/mapper/CryptGroup-lvarch -L arch
     else
-        echo -e $RED":: Erreure de Chiffrement !"$END
+        echo -e $RED":: Erreur de Chiffrement !"$END
         exit
     fi
     }
@@ -69,10 +90,42 @@ hop(){
     mount /dev/mapper/CryptGroup-lvarch /mnt
     echo -e $GREEN":: Activation du swap"$END
     swapon /dev/mapper/CryptGroup-lvswap
-    echo -e $GREEN":: Création du repertoir /boot"$END
-    mkdir /mnt/boot
-    echo -e $GREEN":: Montage de la partition /boot"$END
-    mount /dev/sda1 /mnt/boot
+    if [ $RET= msdos ]; then
+      echo -e $GREEN":: Création du repertoir /boot"$END
+      mkdir /mnt/boot
+      echo -e $GREEN":: Montage de la partition /boot"$END
+      mount /dev/sda1 /mnt/boot
+
+    else
+      echo -e $GREEN":: Création du répertoire /boot/efi"$END
+      mkdir /mnt/boot/efi
+      echo -e $GREEN":: Montage de l'esp"$END
+      mount /dev/sda1 /mnt/boot/efi
+      echo -e $GREEN":: Création du répertoire Archlinux"$END
+      mkdir /mnt/boot/efi/EFI/arch
+      echo -e $GREEN":: Automatisation"$END
+      echo "[Unit]
+Description=Copie du noyau dans l'ESP
+
+[Path]
+PathChanged=/boot/vmlinuz-linux
+PathChanged=/boot/initramfs-linux.img
+PathChanged=/boot/initramfs-linux-fallback.img
+
+[Install]
+WantedBy=multi-user.target" >> /etc/systemd/system/efistub-update.path
+    echo "[Unit]
+Description=Copie du noyau dans l'ESP
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/cp -f /boot/vmlinuz-linux /boot/efi/EFI/arch/vmlinuz-linux.efi
+ExecStart=/usr/bin/cp -f /boot/initramfs-linux.img /boot/initramfs-linux-fallback.img /boot/efi/EFI/arch/
+
+" >> /etc/systemd/system/efistub-update.service
+    echo -e $GREEN":: Activation des services"$END
+    systemctl enable efi-update.path
+  fi
     echo -e $GREEN":: Installation du systeme de base"$END
     pacstrap /mnt base #base-devel
     }
