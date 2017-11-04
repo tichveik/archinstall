@@ -100,11 +100,11 @@ hop(){
 
     else
       echo -e $GREEN":: Création du répertoire /boot/efi"$END
-      mkdir /mnt/boot/efi
+      mkdir -p /mnt/boot/efi
       echo -e $GREEN":: Montage de l'esp"$END
       mount /dev/sda1 /mnt/boot/efi
       echo -e $GREEN":: Création du répertoire Archlinux"$END
-      mkdir /mnt/boot/efi/EFI/arch
+      mkdir -p /mnt/boot/efi/EFI/arch
       echo -e $GREEN":: Automatisation"$END
       echo "[Unit]
 Description=Copie du noyau dans l'ESP
@@ -126,7 +126,7 @@ ExecStart=/usr/bin/cp -f /boot/initramfs-linux.img /boot/initramfs-linux-fallbac
 
 " >> /etc/systemd/system/efistub-update.service
     echo -e $GREEN":: Activation des services"$END
-    systemctl enable efi-update.path
+    systemctl enable efistub-update.path
   fi
     echo -e $GREEN":: Installation du systeme de base"$END
     pacstrap /mnt base #base-devel
