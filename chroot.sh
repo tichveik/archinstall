@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+RET=$1
+
 GREEN='\e[1;32m'        # Green
 BLUE='\e[0;34m'         # Blue
 CYAN='\e[0;36m'         # Cyan
