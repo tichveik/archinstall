@@ -139,7 +139,7 @@ fchroot(){
     echo -e $GREEN":: Copie du script chroot"$END
     cp -v chroot.sh /mnt/
     chmod +x /mnt/chroot.sh
-    arch-chroot /mnt ./chroot.sh
+    arch-chroot /mnt ./chroot.sh $RET
 }
 
 parts
