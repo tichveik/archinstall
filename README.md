@@ -1,4 +1,4 @@
-/!\ In devellopement, USEAT YOUR OWN RISKS
+/!\ In devellopement, USE AT YOUR OWN RISKS
 
 
 # archinstall
