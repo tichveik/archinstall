@@ -44,3 +44,10 @@ echo -e $GREEN"Ajout d'un utilisateur"
 read -p 'Utilisateur: ' USER1
 useradd -g users -m $USER1
 passwd $USER1
+
+post(){
+  read -p 'Voulez vous installer Xorg ? (Y/N)' REP
+  if [ $REP = Y ]; then
+    pacman -S xorg
+    read -p 'Voulez vous '
+}
