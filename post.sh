@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+##--->>> Rankmirror
+
 
 post(){
   read -p 'Voulez vous installer Xorg ? (Y/N): ' REP
@@ -12,9 +14,9 @@ post(){
     echo "3) sddm"
     read -p 'Votre choix: ' REP
     case $REP in
-      1) pacman -S gdm ;;
-      2) pacman -S lightmd ;;
-      3) pacman -S sddm ;;
+      1) pacman -S gdm && systemctl enable gdm;;
+      2) pacman -S lightdm lightdm-greater && systemctl enable lightdm;;
+      3) pacman -S sddm && systemctl enable sddm;;
     esac
   fi
   read -p "Voulez vous installer un environnement graphique (Y/N)" REP
@@ -34,3 +36,5 @@ post(){
             ruby perl transmission-gtk virtualbox zip unzip unrar \
             atom filezilla sudo git
 }
+
+post

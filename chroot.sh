@@ -33,6 +33,7 @@ mkinitcpio -p linux
 echo -e $GREEN":: Installation de GRUB"$END
 pacman -S grub os-prober -y
 if [ $RET = "gpt" ]; then
+  pacman -S efibootmgr -y
   grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=arch_grub --recheck
 else
   grub-install --boot-directory=/boot --no-floppy --recheck /dev/sda
