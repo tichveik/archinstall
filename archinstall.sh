@@ -67,7 +67,7 @@ enc(){
         echo -e $GREEN":: Création des volumes logiques (swap & /)"$END
         lvcreate -C y -L 4G CryptGroup -n lvswap
         lvcreate -l +100%FREE CryptGroup -n lvarch
-        if [ $RET= gpt ]; then
+        if [ $RET = gpt ]; then
           echo -e $GREEN":: Appliquation du systeme de fichier pour /boot/efi"$END
           mkfs.fat -F32 /dev/sda1
 
@@ -90,7 +90,7 @@ hop(){
     mount /dev/mapper/CryptGroup-lvarch /mnt
     echo -e $GREEN":: Activation du swap"$END
     swapon /dev/mapper/CryptGroup-lvswap
-    if [ $RET= msdos ]; then
+    if [ $RET = msdos ]; then
       echo -e $GREEN":: Création du repertoir /boot"$END
       mkdir /mnt/boot
       echo -e $GREEN":: Montage de la partition /boot"$END
