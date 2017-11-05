@@ -92,18 +92,10 @@ hop(){
     mount /dev/mapper/CryptGroup-lvarch /mnt
     echo -e $GREEN":: Activation du swap"$END
     swapon /dev/mapper/CryptGroup-lvswap
-    if [ $RET = "msdos" ]; then
       echo -e $GREEN":: Création du repertoir /boot"$END
       mkdir /mnt/boot
       echo -e $GREEN":: Montage de la partition /boot"$END
       mount /dev/sda1 /mnt/boot
-
-    else
-      echo -e $GREEN":: Création du répertoire /boot/efi"$END
-      mkdir -p /mnt/boot/
-      echo -e $GREEN":: Montage de l'esp"$END
-      mount /dev/sda1 /mnt/boot/
-  fi
     echo -e $GREEN":: Installation du systeme de base"$END
     pacstrap /mnt base #base-devel
     }
