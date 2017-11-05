@@ -100,33 +100,9 @@ hop(){
 
     else
       echo -e $GREEN":: Création du répertoire /boot/efi"$END
-      mkdir -p /mnt/boot/efi
+      mkdir -p /mnt/boot/
       echo -e $GREEN":: Montage de l'esp"$END
-      mount /dev/sda1 /mnt/boot/efi
-      echo -e $GREEN":: Création du répertoire Archlinux"$END
-      mkdir -p /mnt/boot/efi/EFI/arch
-      echo -e $GREEN":: Automatisation"$END
-      echo "[Unit]
-Description=Copie du noyau dans l'ESP
-
-[Path]
-PathChanged=/boot/vmlinuz-linux
-PathChanged=/boot/initramfs-linux.img
-PathChanged=/boot/initramfs-linux-fallback.img
-
-[Install]
-WantedBy=multi-user.target" >> /etc/systemd/system/efistub-update.path
-    echo "[Unit]
-Description=Copie du noyau dans l'ESP
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/cp -f /boot/vmlinuz-linux /boot/efi/EFI/arch/vmlinuz-linux.efi
-ExecStart=/usr/bin/cp -f /boot/initramfs-linux.img /boot/initramfs-linux-fallback.img /boot/efi/EFI/arch/
-
-" >> /etc/systemd/system/efistub-update.service
-    echo -e $GREEN":: Activation des services"$END
-    systemctl enable efistub-update.path
+      mount /dev/sda1 /mnt/boot/
   fi
     echo -e $GREEN":: Installation du systeme de base"$END
     pacstrap /mnt base #base-devel

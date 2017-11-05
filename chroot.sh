@@ -34,7 +34,9 @@ echo -e $GREEN":: Installation de GRUB"$END
 pacman -S grub os-prober -y
 if [ $RET = "gpt" ]; then
   pacman -S efibootmgr -y
-  grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=arch_grub --recheck
+  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=arch_grub --recheck
+  mkdir /boot/EFI/boot
+  cp /boot/EFI/arch_grub/grubx64.efi /boot/EFI/boot/bootx64.efi
 else
   grub-install --boot-directory=/boot --no-floppy --recheck /dev/sda
 fi
