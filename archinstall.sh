@@ -102,7 +102,7 @@ hop(){
 
 fchroot(){
     echo -e $GREEN":: Configuration de /etc/fstab"$END
-    genfstab -U -p /mnt  >> /etc/fstab
+    genfstab -U -p /mnt  >> /mnt/etc/fstab
     echo -e $GREEN":: Chroot..."$END
     echo -e $GREEN":: Copie du script chroot"$END
     cp -v chroot.sh /mnt/
